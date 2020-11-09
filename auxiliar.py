@@ -7,8 +7,4 @@ def sum_strings(str_list):
 
 # This is a function that has to be removed:
 
-def wrong(stri):
-    if stri > 2:
-        print("Nothing to do")
-
 
