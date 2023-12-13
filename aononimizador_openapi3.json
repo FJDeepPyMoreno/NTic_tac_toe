@@ -1,0 +1,1813 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Extractor y Anonimizador de Documentos",
+    "description": "Servicio Coordinador de Extracción y Anonimizador de Documentos",
+    "version": "22.12.22"
+  },
+  "servers": [
+    {
+      "description": "localhost",
+      "url": ""
+    },
+    {
+      "description": "other",
+      "url": "{server}",
+      "variables": {
+        "server": {
+          "default": ""
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": [
+          "Servicio"
+        ],
+        "summary": "Get jwt token",
+        "description": "Get jwt token",
+        "operationId": "auth",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/auth"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/auth"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "tags": [
+          "Servicio"
+        ],
+        "summary": "Estado del servicio",
+        "description": "Estado del servicio",
+        "operationId": "ping",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ping"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/reinit": {
+      "get": {
+        "tags": [
+          "Servicio"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "summary": "Reinicio del servicio",
+        "description": "Reinicio del servicio",
+        "operationId": "reinit",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/reinit"
+          },
+          "500": {
+            "$ref": "#/components/responses/errorReinit"
+          }
+        }
+      }
+    },
+    "/v2/api-docs": {
+      "get": {
+        "tags": [
+          "Servicio"
+        ],
+        "summary": "Endpoint de llamada regular de CentralApi",
+        "description": "Endpoint de llamada regular de CentralApi",
+        "operationId": "v2ApiDocs",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/v2ApiDocs"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/extract/file": {
+      "post": {
+        "tags": [
+          "extract"
+        ],
+        "summary": "Extrae el documento",
+        "description": "Extrae el documento.<br>En el caso de force_extract igual a true, solo almacena la extracción y ner en el caso de no utizar filtros diferentes a los filtros por defecto.<br>En el caso de force_extract igual a false, los filtros se omiten y se utilizan los predefinidos.<br>En todos los casos se alamacena el documento con OCR, si es requerido.",
+        "operationId": "extract/file",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/extractFile"
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/extractFileHash"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/extractFileHash"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/extract/hash/{hashDoc}": {
+      "get": {
+        "tags": [
+          "extract"
+        ],
+        "summary": "Retorno de la extracción por hash",
+        "description": "Retorno de la extracción por hash",
+        "operationId": "extract/hash/{hashDoc}",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/hashDoc"
+          },
+          {
+            "$ref": "#/components/parameters/extractFileHash"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/extractFileHash"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/extract/text": {
+      "post": {
+        "tags": [
+          "extract"
+        ],
+        "deprecated": true,
+        "summary": "Retorna las entidades nominamles de un texto plano",
+        "description": "Retorna las entidades nominamles de un texto plano",
+        "operationId": "extract/text",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/extractText"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/extractText"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/hash/{hashDoc}": {
+      "post": {
+        "tags": [
+          "anonymize"
+        ],
+        "summary": "Anonimiza el archivo",
+        "description": "Anonimiza el archivo",
+        "operationId": "anonymize/hash/{hashDoc}",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/hashDoc"
+          },
+          {
+            "$ref": "#/components/parameters/entitieFilter"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/anonymizeHash"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeFile"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/file": {
+      "post": {
+        "tags": [
+          "anonymize"
+        ],
+        "summary": "Anonimiza el archivo enviando el binario y los datos a anonimizar",
+        "description": "Anonimiza el archivo enviando el binario y los datos a anonimizar",
+        "operationId": "anonymize/file",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/entitieFilter"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/anonymizeFile"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeFile"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/text": {
+      "post": {
+        "tags": [
+          "anonymize"
+        ],
+        "deprecated": true,
+        "summary": "Anominiza el texto dado el texto y los datos de anonimización",
+        "description": "Anominiza el texto dado el texto y los datos de anonimización",
+        "operationId": "anonymize/text",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/anonymizeText"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeText"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/auto": {
+      "post": {
+        "tags": [
+          "anonymize"
+        ],
+        "summary": "Anonimiza el archivo enviando el binario",
+        "description": "Anonimiza el archivo enviando el binario",
+        "operationId": "anonymize/auto",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/entitieFilter"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/anonymizeAuto"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeFile"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/autoInitial": {
+      "post": {
+        "tags": [
+          "anonymize"
+        ],
+        "summary": "Anonimiza el archivo por iniciales enviando el binario",
+        "description": "Anonimiza el archivo por iniciales enviando el binario",
+        "operationId": "anonymize/autoInitial",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/entitieFilter"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/anonymizeAutoInitial"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeFile"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/textauto": {
+      "post": {
+        "tags": [
+          "anonymize"
+        ],
+        "deprecated": true,
+        "summary": "Anonimiza el texto",
+        "description": "Anonimiza el texto",
+        "operationId": "anonymize/textauto",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/anonymizeTextAuto"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeFile"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/auto/hash/{hashDoc}": {
+      "get": {
+        "tags": [
+          "anonymize"
+        ],
+        "summary": "Anonimiza el archivo en modo automático con hash",
+        "description": "Anonimiza el archivo en modo automático con hash",
+        "operationId": "anonymize/auto/hash/{hashDoc}",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/hashDoc"
+          },
+          {
+            "$ref": "#/components/parameters/entitieFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeFile"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/anonymize/autoInitial/hash/{hashDoc}": {
+      "get": {
+        "tags": [
+          "anonymize"
+        ],
+        "summary": "Anonimiza el archivo en modo automático por iniciales con hash",
+        "description": "Anonimiza el archivo en modo automático por iniciales con hash",
+        "operationId": "anonymize/autoInitial/hash/{hashDoc}",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/hashDoc"
+          },
+          {
+            "$ref": "#/components/parameters/entitieFilter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/anonymizeFile"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/files/extract": {
+      "post": {
+        "tags": [
+          "files"
+        ],
+        "summary": "Extrae un expediente en segundo plano",
+        "description": "Extrae un expediente en segundo plano",
+        "operationId": "files/extract",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/filesExtract"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/filesExtract"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/files/get": {
+      "post": {
+        "tags": [
+          "files"
+        ],
+        "summary": "Obtiene los detalles de un expediente",
+        "description": "Obtiene los detalles de un expediente",
+        "operationId": "files/get",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/filesSigPass"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/filesGetCompleted"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/files/zip": {
+      "post": {
+        "tags": [
+          "files"
+        ],
+        "summary": "Obtiene el zip con los detalles de un expediente y datos de usuario",
+        "description": "Obtiene el zip con los detalles de un expediente y datos de usuario",
+        "operationId": "files/zip",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/filesSigPass"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/filesZipCompleted"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/files/userFile": {
+      "post": {
+        "tags": [
+          "files"
+        ],
+        "summary": "Obtiene los datos de usuario, de un expediente",
+        "description": "Obtiene los datos de usuario, de un expediente",
+        "operationId": "files/userFilePost",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/filesSigPass"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/userFilePost"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "files"
+        ],
+        "summary": "Inserta los datos de usuario, de un expediente",
+        "description": "Inserta los datos de usuario, de un expediente",
+        "operationId": "files/userFilePut",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/filesUserFilesPut"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/filesUserFilesPut"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/delete/hash/{hashDoc}": {
+      "delete": {
+        "tags": [
+          "delete"
+        ],
+        "summary": "Elimina un archivo y sus elementos por su hashDoc",
+        "description": "Elimina un archivo y sus elementos por su hashDoc",
+        "operationId": "delete/hash/{hashDoc}",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/hashDoc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/deleteHash"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    },
+    "/delete/all": {
+      "delete": {
+        "tags": [
+          "delete"
+        ],
+        "summary": "Elimina todos los arhcivos y sus elementos",
+        "description": "Elimina todos los arhcivos y sus elementos",
+        "operationId": "delete/all",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/deleteAll"
+          },
+          "default": {
+            "$ref": "#/components/responses/errorDefault"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "JWT": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Prefix the value with \"JWT\" to indicate the custom authorization type"
+      }
+    },
+    "requestBodies": {
+      "auth": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "extractFile": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "file"
+              ],
+              "properties": {
+                "file": {
+                  "$ref": "#/components/schemas/file"
+                }
+              }
+            }
+          }
+        }
+      },
+      "extractText": {
+        "description": "Envia un texto plano para la detección de entidades nominales",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "anonymizeText": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "text",
+                "anomData"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "anomData": {
+                  "type": "array",
+                  "description": "Lista de elementos a anonimzar",
+                  "items": {
+                    "type": "object",
+                    "description": "Objeto de anonimización",
+                    "properties": {
+                      "replace": {
+                        "description": "Texto por el que reemplazar",
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "start_pos": {
+                        "description": "Posición de inicio de la entidad en el texto",
+                        "type": "integer"
+                      },
+                      "end_pos": {
+                        "description": "Posición final de la entidad en el texto",
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "anonymizeAuto": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "file"
+              ],
+              "properties": {
+                "file": {
+                  "$ref": "#/components/schemas/file"
+                }
+              }
+            }
+          }
+        }
+      },
+      "anonymizeAutoInitial": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "file"
+              ],
+              "properties": {
+                "file": {
+                  "$ref": "#/components/schemas/file"
+                }
+              }
+            }
+          }
+        }
+      },
+      "anonymizeHash": {
+        "description": "Objeto de anonimizacón",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/_nerAnom"
+            }
+          }
+        }
+      },
+      "anonymizeFile": {
+        "description": "Objeto de anonimzacion por archivo y datos de anonimización",
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "file",
+                "anomData"
+              ],
+              "properties": {
+                "file": {
+                  "$ref": "#/components/schemas/file"
+                },
+                "anomData": {
+                  "$ref": "#/components/schemas/_nerAnom"
+                }
+              }
+            }
+          }
+        }
+      },
+      "anonymizeTextAuto": {
+        "description": "Objeto de anonimzacion por texto y datos de anonimización y lista de entidades",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "PER",
+                      "ROL",
+                      "LOC",
+                      "ORG",
+                      "LAW",
+                      "IDN",
+                      "CANT",
+                      "CODE",
+                      "MISC",
+                      "DATE"
+                    ],
+                    "example": [
+                      "PER",
+                      "ROL",
+                      "LOC",
+                      "ORG",
+                      "LAW",
+                      "IDN",
+                      "CANT",
+                      "CODE",
+                      "MISC",
+                      "DATE"
+                    ],
+                    "uniqueItems": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "filesExtract": {
+        "description": "Extracción del expediente",
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "files": {
+                  "$ref": "#/components/schemas/file"
+                },
+                "password": {
+                  "$ref": "#/components/schemas/password"
+                }
+              },
+              "required": [
+                "files",
+                "password"
+              ]
+            }
+          }
+        }
+      },
+      "filesSigPass": {
+        "description": "Peticion de datos de expediente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "signature": {
+                  "$ref": "#/components/schemas/signature"
+                },
+                "password": {
+                  "$ref": "#/components/schemas/password"
+                }
+              }
+            }
+          }
+        }
+      },
+      "filesUserFilesPut": {
+        "description": "Peticion de inserccionde datos usaurio de un expediente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "signature": {
+                  "$ref": "#/components/schemas/signature"
+                },
+                "password": {
+                  "$ref": "#/components/schemas/password"
+                },
+                "user_file": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "hashDoc": {
+        "in": "path",
+        "name": "hashDoc",
+        "schema": {
+          "type": "string"
+        },
+        "required": true,
+        "description": "Hash del documento"
+      },
+      "extractFileHash": {
+        "in": "query",
+        "name": "filter",
+        "description": "Filtros, se pueden seleccionar varios, si nunguno es seleccionado solo son retornados, los predefinidos: metadata, html, text, ner, similarity <br> force_extract es para forzar la extraccion de todos los elementos en el filtro",
+        "explode": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "html",
+              "text",
+              "metadata",
+              "textsimple",
+              "render",
+              "ner",
+              "similarity",
+              "chrono",
+              "cant",
+              "relation",
+              "force_extract"
+            ]
+          }
+        }
+      },
+      "forceExtract": {
+        "in": "query",
+        "name": "force_extract",
+        "description": "Forzar extracción",
+        "schema": {
+          "type": "boolean",
+          "default": false,
+          "nullable": true
+        }
+      },
+      "entitieFilter": {
+        "in": "query",
+        "name": "filter",
+        "description": "Filtro de entidades nominales",
+        "schema": {
+          "type": "array",
+          "description": "Vacio, no hay filtro",
+          "items": {
+            "type": "string",
+            "enum": [
+              "PER",
+              "ROL",
+              "LOC",
+              "ORG",
+              "LAW",
+              "IDN",
+              "CANT",
+              "CODE",
+              "MISC",
+              "DATE"
+            ],
+            "additionalProperties": false,
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "responses": {
+      "auth": {
+        "description": "Respuesta Auth",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "access_token": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ping": {
+        "description": "Respuesta de ping",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "descripción": {
+                  "type": "string",
+                  "description": "Descripción servicio"
+                },
+                "URL de acceso": {
+                  "type": "string",
+                  "description": "URL de Solicitud"
+                },
+                "Version": {
+                  "type": "string",
+                  "description": "Version"
+                },
+                "Host": {
+                  "type": "string",
+                  "description": "Host"
+                },
+                "Port": {
+                  "type": "integer",
+                  "description": "Port"
+                },
+                "Servername": {
+                  "type": "string",
+                  "description": "Servername"
+                },
+                "PID": {
+                  "type": "integer",
+                  "description": "PID servicio"
+                }
+              }
+            }
+          }
+        }
+      },
+      "reinit": {
+        "description": "Reinicio del servicio",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Reinicio del servicio",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "OK"
+                },
+                "stdout": {
+                  "type": "string",
+                  "description": "Mensaje de stdout"
+                },
+                "stderr": {
+                  "type": "string",
+                  "description": "Mensaje de stderr"
+                }
+              }
+            }
+          }
+        }
+      },
+      "v2ApiDocs": {
+        "description": "Llamada desde CentralApi",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Llamada desde CentralApi",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "OK"
+                },
+                "stdout": {
+                  "type": "string",
+                  "description": "Mensaje de stdout"
+                },
+                "stderr": {
+                  "type": "string",
+                  "description": "Mensaje de stderr"
+                }
+              }
+            }
+          }
+        }
+      },
+      "errorDefault": {
+        "description": "Respuesta de error por defecto",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Respuesta de error error por defecto",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "Descripción del error"
+                },
+                "trace": {
+                  "type": "string",
+                  "description": "Traza del error"
+                },
+                "traurlce": {
+                  "type": "string",
+                  "description": "url del error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "error404": {
+        "description": "Respuesta de error 404",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Respuesta de error 404",
+              "properties": {
+                "errmsg": {
+                  "type": "string",
+                  "description": "Not Found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "errorReinit": {
+        "description": "Respuesta de error 500 en reinicio",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Respuesta de error 500 en reinicio",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "Mensaje de error en reinicio"
+                },
+                "stdout": {
+                  "type": "string",
+                  "description": "Mensaje de error stdout"
+                },
+                "stderr": {
+                  "type": "string",
+                  "description": "Mensaje de error stderr"
+                }
+              }
+            }
+          }
+        }
+      },
+      "extractFileHash": {
+        "description": "Respuesta correcta de la extracción del document0",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "metadata": {
+                  "$ref": "#/components/schemas/metadata"
+                },
+                "html": {
+                  "$ref": "#/components/schemas/html"
+                },
+                "text": {
+                  "$ref": "#/components/schemas/text"
+                },
+                "ner": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Lista de entidades detectadas por página",
+                    "properties": {
+                      "page": {
+                        "type": "integer",
+                        "description": "Número de página"
+                      },
+                      "ner": {
+                        "$ref": "#/components/schemas/_nerExtract"
+                      }
+                    }
+                  }
+                },
+                "similarity": {
+                  "$ref": "#/components/schemas/similarity"
+                },
+                "textsimple": {
+                  "type": "string",
+                  "description": "Texto de todo el documento"
+                },
+                "chronology": {
+                  "$ref": "#/components/schemas/chronology"
+                },
+                "cantidades": {
+                  "$ref": "#/components/schemas/amount"
+                },
+                "relation": {
+                  "type": "object",
+                  "properties": {
+                    "Actora": {
+                      "type": "array",
+                      "description": "Parte Actora",
+                      "items": {
+                        "$ref": "#/components/schemas/relation"
+                      }
+                    },
+                    "Contraparte": {
+                      "type": "array",
+                      "description": "Contraparte",
+                      "items": {
+                        "$ref": "#/components/schemas/relation"
+                      }
+                    },
+                    "ConRelaciones": {
+                      "type": "array",
+                      "description": "Entidad con relación",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/relation"
+                          },
+                          {
+                            "type": "object",
+                            "description": "",
+                            "properties": {
+                              "Procuradores": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/components/schemas/Procurador"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "SinRelaciones": {
+                      "type": "array",
+                      "description": "Entidad sin relación con Atributos",
+                      "items": {
+                        "$ref": "#/components/schemas/relation"
+                      }
+                    },
+                    "SinRelacionesNiAtributos": {
+                      "type": "array",
+                      "description": "Entidad sin relación y sin Atributos",
+                      "items": {
+                        "$ref": "#/components/schemas/relation"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "extractText": {
+        "description": "Retorna las entidades nominales detectadas en un texto plano",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "ner": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/_nerExtract"
+                  }
+                },
+                "text": {
+                  "description": "Posible cambio por codificaciones entre javascript y python",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "anonymizeFile": {
+        "description": "Correct",
+        "content": {
+          "application/pdf": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          }
+        },
+        "headers": {
+          "Content-Disposition": {
+            "schema": {
+              "type": "string",
+              "description": "Used only with `application/pdf` responses",
+              "example": "attachment; filename='name.pdf'"
+            }
+          }
+        }
+      },
+      "anonymizeText": {
+        "description": "Correct",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Texto Anonimizado",
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "deleteHash": {
+        "description": "Correct",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Eliminado correctamente",
+              "properties": {
+                "Response": {
+                  "type": "string",
+                  "description": "Respuesta correcta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "deleteAll": {
+        "description": "Correct",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Eliminado correctamente",
+              "properties": {
+                "Message": {
+                  "type": "string",
+                  "description": "Respuesta correcta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "filesExtract": {
+        "description": "Descompresión correcta, empieza la extraccion del expediente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "signature": {
+                  "$ref": "#/components/schemas/signature"
+                },
+                "file_list": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Archivos a extraer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "filesGetCompleted": {
+        "description": "Respuesta correcta de la extracción de Pdf",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "metadata": {
+                  "$ref": "#/components/schemas/metadata"
+                },
+                "html": {
+                  "$ref": "#/components/schemas/html"
+                },
+                "text": {
+                  "$ref": "#/components/schemas/text"
+                },
+                "ner": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Lista de entidades detectadas por página",
+                    "properties": {
+                      "page": {
+                        "type": "integer",
+                        "description": "Número de página"
+                      },
+                      "ner": {
+                        "$ref": "#/components/schemas/_nerExtract"
+                      }
+                    }
+                  }
+                },
+                "similarity": {
+                  "$ref": "#/components/schemas/similarity"
+                },
+                "textsimple": {
+                  "type": "string",
+                  "description": "Texto de todo el documento"
+                }
+              }
+            }
+          }
+        }
+      },
+      "filesZipCompleted": {
+        "description": "Zip con los detalles del expdiente",
+        "content": {
+          "application/zip": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          }
+        }
+      },
+      "userFilePost": {
+        "description": "Json con los datos de usuario de un expdiente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "filesUserFilesPut": {
+        "description": "Json con los datos de usuario de un expdiente",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "description": "Mensaje, creado correcto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "metadata": {
+        "description": "Metadatos del pdf",
+        "type": "object",
+        "properties": {
+          "kb_size": {
+            "type": "number",
+            "description": "Tamaño del archivo en kb"
+          },
+          "pages": {
+            "type": "integer",
+            "description": "Número de páginas"
+          },
+          "signature": {
+            "description": "Firmas del pdf",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "csv": {
+            "description": "Objeto, csv del pdf",
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "description": "Fecha de creación del pdf"
+          },
+          "modDate": {
+            "type": "string",
+            "description": "Fecha de modicificación del pdf"
+          },
+          "trapped": {
+            "type": "string",
+            "description": "No se que es"
+          },
+          "creator": {
+            "type": "string",
+            "description": "Creator del pdf"
+          },
+          "title": {
+            "type": "string",
+            "description": "Título del pdf"
+          },
+          "author": {
+            "type": "string",
+            "description": "Autor del pdf"
+          },
+          "subject": {
+            "type": "string",
+            "description": "No se que es"
+          },
+          "keywords": {
+            "type": "string",
+            "description": "No se que es"
+          },
+          "producer": {
+            "type": "string",
+            "description": "Productor del pdf"
+          },
+          "encryption": {
+            "type": "string",
+            "description": "No se que es"
+          },
+          "format": {
+            "type": "string",
+            "description": "Formato del PDF"
+          },
+          "version": {
+            "type": "string",
+            "description": "Versión del extractor"
+          },
+          "not_extractable": {
+            "type": "array",
+            "description": "Lista de páginas no extraibles, necesitan OCR",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "hash": {
+            "type": "string",
+            "description": "hash del archivo"
+          },
+          "ftype": {
+            "type": "string",
+            "description": "tipo de archivo"
+          },
+          "nig": {
+            "type": "array",
+            "description": "Valores de NIG, clase, numero y año procedimiento",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "html": {
+        "description": "Representación html del pdf",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "integer",
+              "description": "Número de página"
+            },
+            "html": {
+              "type": "string",
+              "description": "Representación html de la página"
+            }
+          }
+        }
+      },
+      "text": {
+        "description": "Texto del pdf",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "integer",
+              "description": "Número de página"
+            },
+            "text": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "id_block": {
+                    "type": "integer",
+                    "description": "Identificador del bloque de texto"
+                  },
+                  "id_line": {
+                    "type": "integer",
+                    "description": "Identificador de linea dentro del bloque de text"
+                  },
+                  "id_span": {
+                    "type": "integer",
+                    "description": "Identificador del span dentro de la línea de text"
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "Texto plano de la línea"
+                  },
+                  "firma": {
+                    "type": "boolean",
+                    "description": "Es una firma si o no, usado para eliminarse en la anonimzación"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "render": {
+        "description": "imagen render del pdf",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "integer",
+              "description": "Número de página"
+            },
+            "render": {
+              "type": "string",
+              "description": "imagen render de la página"
+            }
+          }
+        }
+      },
+      "_nerAnom": {
+        "type": "array",
+        "description": "Entidades nominales detectadas",
+        "items": {
+          "type": "object",
+          "properties": {
+            "replace": {
+              "type": "string",
+              "description": "palabra a reemplazar en la entidad nominal, sustituye al replace del nodo hijo"
+            },
+            "anom": {
+              "type": "array",
+              "description": "Lista de entidades detectadas",
+              "items": {
+                "$ref": "#/components/schemas/_spanAnom"
+              }
+            }
+          }
+        }
+      },
+      "_nerExtract": {
+        "type": "array",
+        "description": "Entidades nominales detectadas",
+        "items": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Tipo de entidad nonminal detectada"
+            },
+            "entity_id": {
+              "type": "integer",
+              "description": "Identificador de la entidad nominal"
+            },
+            "anom": {
+              "type": "array",
+              "description": "Lista de bloques a anonimizar",
+              "items": {
+                "$ref": "#/components/schemas/_spanNer"
+              }
+            }
+          }
+        }
+      },
+      "_spanNer": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/_spanNerAnom"
+          },
+          {
+            "type": "object",
+            "description": "Span con anonimzacion de entidad nominal",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "Texto de la etiqueta en el span"
+              }
+            }
+          }
+        ]
+      },
+      "_spanAnom": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/_spanNerAnom"
+          },
+          {
+            "type": "object",
+            "description": "Span con anonimzacion de entidad nominal",
+            "properties": {
+              "replace": {
+                "type": "string",
+                "description": "Texto a reemplazar en el span"
+              }
+            }
+          }
+        ]
+      },
+      "_spanNerAnom": {
+        "type": "object",
+        "description": "Span con parte de entidad nominal",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Página de la etiqueta"
+          },
+          "id_block": {
+            "type": "integer",
+            "description": "Identificador de bloque"
+          },
+          "id_line": {
+            "type": "integer",
+            "description": "Identificador de línea en el bloque"
+          },
+          "id_span": {
+            "type": "integer",
+            "description": "Identificador de span en la línea"
+          },
+          "pos": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "integer",
+                "description": "Posición de comienzo de entidad en la línea"
+              },
+              "end": {
+                "type": "integer",
+                "description": "Posición de finañización de entidad en la línea"
+              }
+            }
+          }
+        }
+      },
+      "similarity": {
+        "type": "object",
+        "description": "Objeto de similaridad",
+        "properties": {
+          "PER": {
+            "description": "Lista de grupos de Entidad PER",
+            "type": "array",
+            "items": {
+              "type": "array",
+              "description": "Lista de grupos",
+              "items": {
+                "type": "object",
+                "description": "Elementos de cada grupo",
+                "properties": {
+                  "entity_id": {
+                    "type": "integer",
+                    "description": "Identificador de etiqueta"
+                  },
+                  "similarity": {
+                    "type": "number",
+                    "description": "ïndice de similaridad con su grupo"
+                  },
+                  "entity_text": {
+                    "type": "string",
+                    "description": "Texto de la entidad"
+                  }
+                }
+              }
+            }
+          },
+          "ORG": {
+            "description": "Lista de grupos de Entidad ORG",
+            "type": "array",
+            "items": {
+              "type": "array",
+              "description": "Lista de grupos",
+              "items": {
+                "type": "object",
+                "description": "Elementos de cada grupo",
+                "properties": {
+                  "entity_id": {
+                    "type": "integer",
+                    "description": "Identificador de etiqueta"
+                  },
+                  "similarity": {
+                    "type": "number",
+                    "description": "Índice de similaridad con su grupo"
+                  },
+                  "entity_text": {
+                    "type": "string",
+                    "description": "Texto de la entidad"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "chronology": {
+        "type": "array",
+        "description": "Cronologia de sucesos",
+        "items": {
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Fecha normalizada",
+              "example": "dd/mm/yyyy"
+            },
+            "entity_id": {
+              "type": "integer",
+              "description": "Identificador de entidad nominal"
+            },
+            "document": {
+              "type": "string",
+              "description": "nombre del documento"
+            }
+          }
+        }
+      },
+      "amount": {
+        "type": "array",
+        "description": "Cantidades económicas",
+        "items": {
+          "properties": {
+            "cant": {
+              "type": "number",
+              "description": "Cantidad normalizada"
+            },
+            "entity_id": {
+              "type": "integer",
+              "description": "Identificador de entidad nominal"
+            },
+            "document": {
+              "type": "string",
+              "description": "nombre del documento"
+            }
+          }
+        }
+      },
+      "file": {
+        "type": "string",
+        "description": "Archivo a Extraer",
+        "format": "binary"
+      },
+      "password": {
+        "type": "string",
+        "description": "Contraseña de expediente"
+      },
+      "signature": {
+        "type": "string",
+        "description": "Huella de seguimiento personal de expediente"
+      },
+      "Procurador": {
+        "type": "object",
+        "properties": {
+          "PER": {
+            "type": "array",
+            "description": "Persona asociados",
+            "items": {
+              "type": "string"
+            }
+          },
+          "LOC": {
+            "type": "array",
+            "description": "Localización asociados",
+            "items": {
+              "type": "string"
+            }
+          },
+          "IDN": {
+            "type": "array",
+            "description": "Identificador asociados",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "relation": {
+        "properties": {
+          "PER-ORG": {
+            "type": "string",
+            "description": "Relación persona con Organización"
+          },
+          "ROL": {
+            "type": "array",
+            "description": "Roles asociados",
+            "items": {
+              "type": "string"
+            }
+          },
+          "LOC": {
+            "type": "array",
+            "description": "Localización asociados",
+            "items": {
+              "type": "string"
+            }
+          },
+          "IDN": {
+            "type": "array",
+            "description": "Identificador asociados",
+            "items": {
+              "type": "string"
+            }
+          },
+          "FJ": {
+            "type": "array",
+            "description": "Figura Judicial",
+            "items": {
+              "type": "string"
+            }
+          },
+          "Firmante": {
+            "type": "boolean",
+            "description": "Es firmante"
+          }
+        }
+      }
+    }
+  }
+}
